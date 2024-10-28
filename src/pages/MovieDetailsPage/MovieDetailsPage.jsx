@@ -1,6 +1,6 @@
 import { useParams, Link, Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { fetchMovieDetails } from "../../api"; // Використовуйте свій шлях до функції API
+import { fetchMovieDetails } from "../../api";
 import styles from "./MovieDetailsPage.module.css";
 
 const MovieDetailsPage = () => {

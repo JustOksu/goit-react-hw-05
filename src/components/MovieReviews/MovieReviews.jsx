@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { fetchMovieReviews } from "../../api";
+import styles from "./MovieReviews.module.css";
 
 const MovieReviews = () => {
   const { movieId } = useParams();
@@ -8,27 +9,27 @@ const MovieReviews = () => {
 
   useEffect(() => {
     const getReviews = async () => {
-      const data = await fetchMovieReviews(movieId);
-      setReviews(data.results);
+      try {
+        const data = await fetchMovieReviews(movieId);
+        setReviews(data.results);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
     };
     getReviews();
   }, [movieId]);
 
   return (
-    <div>
-      <h3>Reviews</h3>
-      {reviews.length === 0 ? (
-        <p>No reviews found.</p>
+    <div className={styles.reviewList}>
+      {reviews.length > 0 ? (
+        reviews.map((review) => (
+          <div key={review.id} className={styles.review}>
+            <h4>{review.author}</h4>
+            <p>{review.content}</p>
+          </div>
+        ))
       ) : (
-        <ul>
-          {reviews.map((review) => (
-            <li key={review.id}>
-              <p>
-                <strong>{review.author}</strong>: {review.content}
-              </p>
-            </li>
-          ))}
-        </ul>
+        <p>No reviews available.</p>
       )}
     </div>
   );

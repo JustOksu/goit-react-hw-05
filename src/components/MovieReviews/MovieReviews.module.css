@@ -1,0 +1,47 @@
+/* MovieReviews.module.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review {
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.author {
+  font-weight: bold;
+  color: #333;
+}
+
+.date {
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 0.25rem;
+}
+
+.content {
+  margin-top: 1rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .review {
+    padding: 1rem;
+  }
+}
