@@ -1,42 +1,68 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { fetchMoviesByQuery } from "../../api";
+import MovieList from "../../components/MovieList/MovieList";
+import styles from "./MoviesPage.module.css";
 
 const MoviesPage = () => {
-  const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const query = searchParams.get("query") || "";
 
-  const handleSearch = async (event) => {
-    event.preventDefault();
+  useEffect(() => {
     if (!query) return;
 
-    try {
-      const data = await fetchMoviesByQuery(query);
-      setMovies(data.results);
-    } catch (error) {
-      console.error("Error fetching movies by query:", error);
+    const getMovies = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchMoviesByQuery(query);
+        setMovies(data.results);
+        // eslint-disable-next-line no-unused-vars
+      } catch (error) {
+        setError("Error fetching movies. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getMovies();
+  }, [query]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const searchQuery = form.elements.search.value.trim();
+
+    if (searchQuery) {
+      setSearchParams({ query: searchQuery });
+    } else {
+      setSearchParams({});
     }
+
+    form.reset();
   };
 
   return (
-    <div>
-      <h1>Search Movies</h1>
-      <form onSubmit={handleSearch}>
+    <div className={styles.moviesPage}>
+      <form onSubmit={handleSubmit} className={styles.searchForm}>
         <input
           type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for movies..."
+          name="search"
+          placeholder="Search for movies"
+          defaultValue={query}
+          className={styles.searchInput}
         />
-        <button type="submit">Search</button>
+        <button type="submit" className={styles.searchButton}>
+          Search
+        </button>
       </form>
-      <ul>
-        {movies.map((movie) => (
-          <li key={movie.id}>
-            <Link to={`/movies/${movie.id}`}>{movie.title}</Link>
-          </li>
-        ))}
-      </ul>
+      {loading && <p>Loading...</p>}
+      {error && <p className={styles.errorMessage}>{error}</p>}
+      {movies.length > 0 && <MovieList movies={movies} />}
+      {movies.length === 0 && !loading && !error && <p>No movies found.</p>}
     </div>
   );
 };
